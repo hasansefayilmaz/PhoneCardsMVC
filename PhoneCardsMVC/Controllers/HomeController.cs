@@ -31,7 +31,7 @@ namespace PhoneCardsMVC.Controllers
             List<Contact> contacts = new List<Contact>();
 
 
-            var result = Db.Contact.Where(x=> x.IsActive).OrderBy(q => q.Name).Take(3).ToList();
+            var result = Db.Contact.Where(x => x.IsActive).OrderBy(q => q.Name).Take(3).ToList();
 
 
             foreach (var item in result)
@@ -40,8 +40,8 @@ namespace PhoneCardsMVC.Controllers
                 con.Id = item.Id;
                 con.Name = item.Name;
                 con.Surname = item.Surname;
-                con.GroupName = item.Group.Name  ;
-                con.TitleName =  item.TitleId != null ?  item.Title.Name : "";
+                con.GroupName = item.Group.Name;
+                con.TitleName = item.TitleId != null ? item.Title.Name : "";
 
                 contacts.Add(con);
             }
@@ -135,6 +135,7 @@ namespace PhoneCardsMVC.Controllers
                 return View();
 
             }
+            contact.IsActive = true;
             Db.Entry(contact).State = EntityState.Modified;
             Db.SaveChanges();
 
