@@ -1,0 +1,231 @@
+﻿@model  PhoneCardsMVC.Models.Contact
+@{
+    ViewBag.Title = "Add Contact";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@*<script type="text/javascript" src="/Scripts/jquery.maskedinput.min.js"></script>*@
+
+@*<script>
+        $(document).ready(function () {
+            $("#phone").mask("(999)99999-99");
+        });
+    </script>*@
+
+<script type="text/javascript" src="/Scripts/jquery-1.10.2.min.js" charset="utf-8"></script>
+<h2>Add Contact</h2>
+<div>
+
+    @using (Html.BeginForm("AddContact", "Home", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        <table cellpadding="5" cellspacing="5">
+            <tr>
+                <th colspan="2" align="center">Person Details</th>
+            </tr>
+            <tr>
+                <td>Name*: </td>
+                <td>
+                    @Html.TextBoxFor(m => m.Name, new { @id = "name", @name = "name", @maxlength = "50", @oninput = "validateAlpha();" })
+                    @Html.ValidationMessageFor(x => x.Name, "", new { @class = "text-danger" })
+                </td>
+            </tr>
+            <tr>
+                <td>Surname*: </td>
+                <td>
+                    @Html.TextBoxFor(m => m.Surname, new { @id = "surname", @name = "surname", @maxlength = "50", @oninput = "validateAlpha();" })
+                    @Html.ValidationMessageFor(x => x.Surname, "", new { @class = "text-danger" })
+                </td>
+            </tr>
+            <tr>
+                <td>Phone*: </td>
+                <td>
+                    @Html.TextBoxFor(m => m.Phone, new { @id = "phone", @name = "phone", @maxlength = "10", @oninput = "isNumberKey();" })
+                    @Html.ValidationMessageFor(x => x.Phone, "", new { @class = "text-danger" })
+                </td>
+            </tr>
+            <tr>
+                <td>Group*: </td>
+                <td>
+
+                    @Html.DropDownListFor(m => m.GroupId, null, "Seciniz", new { @id = "GroupId", @Name = "GroupId", @onchange = "changeGroup();" })
+                    @Html.ValidationMessageFor(x => x.GroupId, "", new { @class = "text-danger" })
+                </td>
+            </tr>
+
+            <tr id="title" name="title">
+                <td>Unvan</td>
+                <td>
+                    @Html.DropDownListFor(m => m.TitleId, null, "Seciniz", new { @id = "TitleId", @Name = "TitleId" })
+                </td>
+            </tr>
+
+            <tr id="clientCompany" name="clientCompany" style="display:none;">
+                <td>Client Company*: </td>
+                <td>
+                    @Html.DropDownListFor(m => m.CompanyId, null, "Seciniz", new { @id = "CompanyId", @Name = "CompanyId" })
+                    @Html.ValidationMessageFor(x => x.CompanyId, "", new { @class = "text-danger" })
+                </td>
+            </tr>
+            <tr id="clientDepartment" name="clientDepartment" style="display:none;">
+                <td>Client Department: </td>
+                <td>
+                    @Html.DropDownListFor(m => m.DepartmentId, null, "Seciniz", new { @id = "DepartmentId", @Name = "DepartmentId" })
+                </td>
+            </tr>
+
+
+            <tr id="consultantType" name="consultantType" style="display:none;">
+                <td>Consultant Type*: </td>
+                <td>
+                    @Html.DropDownListFor(m => m.ConsultantTypeId, null, "Seçiniz", new { @id = "ConsultantTypeId", @Name = "ConsultantTypeId" })
+                    @Html.ValidationMessageFor(x => x.ConsultantTypeId, "", new { @class = "text-danger" })
+                </td>
+            </tr>
+
+            <tr>
+                <td></td>
+                <td><button type="submit">Save Contact</button>
+            </tr>
+        </table>
+    }
+</div>
+<div>
+    <input id="Response" type="hidden" value="@ViewBag.Response" />
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        var response = $("#Response").val();
+        if (response.length >0) {
+            alert(response);
+        }
+
+
+        changeGroup();
+        //getTitlesByGroupId();
+        //getDepartmentsByCompanyId();
+
+        // Group Change Event
+        $("#GroupId").change(function () {
+            getTitlesByGroupId();
+        }
+         );
+
+        // Company Change Event
+        $("#CompanyId").change(function () {
+            getDepartmentsByCompanyId();
+        }
+        );
+
+    });
+
+
+    function validateAlpha() {
+        var nameInput = document.getElementById("name").value;
+        var surnameInput = document.getElementById("surname").value;
+        nameInput = nameInput.replace(/[^A-Za-z ]/g, "");
+        surnameInput = surnameInput.replace(/[^A-Za-z ]/g, "");
+        document.getElementById("name").value = nameInput;
+        document.getElementById("surname").value = surnameInput;
+    }
+    function isNumberKey() {
+        var phoneInput = document.getElementById("phone").value;
+        phoneInput = phoneInput.replace(/[^0-9]/g, "");
+        document.getElementById("phone").value = phoneInput;
+    }
+
+    function changeGroup() {
+        var groupInput = document.getElementById("GroupId").value;
+
+        getTitlesByGroupId();
+
+        if (groupInput == 1) {
+            $("#clientCompany").show();
+            $("#clientDepartment").show();
+            $("#consultantType").hide();
+        }
+        else if (groupInput == 2) {
+            $("#consultantType").show();
+            $("#clientCompany").hide();
+            $("#clientDepartment").hide();
+        }
+        else {
+            $("#clientCompany").hide();
+            $("#consultantType").hide();
+            $("#clientDepartment").hide();
+        }
+
+
+    }
+
+
+
+    function getTitlesByGroupId() {
+        $.get("/Home/GetTitles",
+            { GroupId: $("#GroupId").val() },
+            function (data) {
+                $("#TitleId").empty().append('<option value="">Seçiniz</option>');
+                $.each(data,
+                    function (index, row) {
+                        $("#TitleId").append("<option value='" + row.Id + "'>" + row.Name + "</option>");
+                    });
+
+            });
+
+        if ($('#GroupId').val() == 1) {
+
+            $('#ConsultantTypeId').val(null);
+
+            //$('#ConsultantTypeId').removeAttr("data-val-required");
+            //$("[data-valmsg-for=ConsultantTypeId]").hide();
+            //$("[data-valmsg-for=CompanyId]").show();
+            //$('#CompanyId').attr("data-val-required", "Bu alan zorunludur.");
+
+
+        } else {
+            $('#DepartmentId').val(null);
+            $('#CompanyId').val(null);
+
+            //$('#CompanyId').removeAttr("data-val-required");
+            //$("[data-valmsg-for=CompanyId]").hide();
+            //$("[data-valmsg-for=ConsultantTypeId]").show();
+            //$('#ConsultantTypeId').attr("data-val-required", "Bu alan zorunludur.");
+
+        }
+    }
+
+
+    function getDepartmentsByCompanyId() {
+        $.get("/Home/GetClientDepartments", { CompanyId: $("#CompanyId").val() }, function (data) {
+            $("#DepartmentId").empty().append('<option value="">Seçiniz</option>');;
+            $.each(data,
+                function (index, row) {
+                    $("#DepartmentId").append("<option value='" + row.Id + "'>" + row.Name + "</option>");
+                });
+        });
+    }
+
+
+    function insertContact() {
+        var contact = JSON.stringify({
+            'Name': $('#name').val(),
+            'Surname': $('#surname').val(),
+            'Phone': $('#phone').val(),
+            'GroupId': $('#GroupId').val(),
+            'DepartmentId': $('#DepartmentId').val(),
+            'CompanyId': $('#CompanyId').val(),
+            'ConsultantTypeId': $('#ConsultantTypeId').val(),
+            'TitleId': $('#TitleId').val(),
+            'IsActive': true
+        });
+        $.ajax({
+            url: '/Home/AddContact',
+            type: 'POST',
+            data: contact,
+            dataType: "json",
+            contentType: "application/json; charset=utf-8"
+        });
+    }
+
+</script>

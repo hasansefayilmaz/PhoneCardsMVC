@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="3d2d901a2b2c4b7389832344ab66f522" Name="Diagram1">
+        <EntityTypeShape EntityType="PhoneCardsDBModel.Company" Width="1.5" PointX="5.75" PointY="1" />
+        <EntityTypeShape EntityType="PhoneCardsDBModel.ConsultantType" Width="1.5" PointX="0.75" PointY="5.75" />
+        <EntityTypeShape EntityType="PhoneCardsDBModel.Contact" Width="1.5" PointX="3" PointY="1" />
+        <EntityTypeShape EntityType="PhoneCardsDBModel.Department" Width="1.5" PointX="8" PointY="0.875" />
+        <EntityTypeShape EntityType="PhoneCardsDBModel.Group" Width="1.5" PointX="2.75" PointY="5.75" />
+        <EntityTypeShape EntityType="PhoneCardsDBModel.Title" Width="1.5" PointX="0.75" PointY="1.625" />
+        <AssociationConnector Association="PhoneCardsDBModel.FK_Department_Company" />
+        <AssociationConnector Association="PhoneCardsDBModel.FK_Contact_Title" />
+        <AssociationConnector Association="PhoneCardsDBModel.FK_Contact_Company" />
+        <AssociationConnector Association="PhoneCardsDBModel.FK_Contact_ConsultantType" />
+        <AssociationConnector Association="PhoneCardsDBModel.FK_Contact_Department" />
+        <AssociationConnector Association="PhoneCardsDBModel.FK_Contact_Group" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

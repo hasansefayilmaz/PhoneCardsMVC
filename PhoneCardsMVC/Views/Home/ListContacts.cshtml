@@ -1,0 +1,103 @@
+﻿@model PhoneCardsMVC.Models.ListContactViewModel
+
+@{
+    ViewBag.Title = "ListContacts";
+}
+
+<h2>ListContacts</h2>
+<script type="text/javascript" src="/Scripts/jquery-1.10.2.min.js" charset="utf-8"></script>
+
+<p>
+    @Html.ActionLink("Create New", "AddContact")
+    
+        <input style="float: right" id="Next3Row" type="button" value="Next (+3) >>" name="Next (+3) >>" />
+</p>
+<table id="ContactList" class="table">
+    <tr>
+        <th>Ad</th>
+        <th>Soyad</th>
+        <th>Kişi Grubu</th>
+        <th>Ünvan</th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model.Contacts)
+    {
+        <tr>
+            <td>@item.Name</td>
+            <td>@item.Surname</td>
+            <td>@item.GroupName  </td>
+            <td>@item.TitleName </td>
+            <td>
+                @Html.ActionLink("Edit", "EditContact", new { id = item.Id }) |
+                @Html.ActionLink("Details", "DetailContact", new { id = item.Id }) |
+                @Html.ActionLink("Delete", "DeleteContact", new { id = item.Id })
+            </td>
+        </tr>
+    }
+
+</table>
+
+
+<div id="hiddenArea">
+    <input id="Response" type="hidden" value="@ViewBag.Response" />
+    <input id="Each" type="hidden" value="1" />
+</div>
+
+<script type="text/javascript">
+
+
+    $(document).ready(function () {
+
+        var response = $("#Response").val();
+        if (response.length > 0) {
+            window.location.href = '/Home/ListContacts/';
+            alert(response);
+        }
+
+        var eachVal = $('#Each').val();
+
+        $('#Next3Row').click(function (id) {
+
+
+            $.ajax({
+                cache: false,
+                url: "/api/Home/Next3Record/",
+                type: "GET",
+                data: { each: eachVal },
+                dataType: "json",
+                success: function (data) {
+                    $.each(data,
+                        function (i) {
+
+                            var id = data[i].Id;
+                            var name = data[i].Name;
+                            var surname = data[i].Surname;
+                            var group = data[i].Group.Name;
+                            var title = data[i].Title.Name;
+
+                            $('#ContactList').append('<tr><td>' + name + '</td><td>' + surname + '</td><td>' + group + '</td><td>' + title + '</td>' +
+                                '<td><a href="/Home/EditContact/' + id + '">Edit | </a> ' +
+                                '<a href="/Home/DetailContact/' + id + '">Details | </a>' +
+                                '<a href="/Home/DeleteContact/' + id + '">Delete</a>' +
+                                '</td></tr>');
+
+                        });
+                    $('#Each').val(eachVal++);
+
+                },
+                error: function (response) {
+                    alert(response.status + " - " + response.statusText);
+                }
+            });
+        });
+
+
+
+
+
+    });
+
+
+
+</script>
